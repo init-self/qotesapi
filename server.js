@@ -2,7 +2,7 @@ const express = require('express')
 const connection = require('./connection/connection')
 const routes = require('./src/routes')
 
-require('dotenv').config('./.env')
+require('dotenv')
 require('./src/controllers/auth')
 
 
