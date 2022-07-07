@@ -17,7 +17,7 @@ let host, port
 /**
  * give priority to config values if provided from command line
  */
-if(process.argv.length > 2)
+/*if(process.argv.length > 2)
 {
 	if(process.argv[2] === '--host' || process.argv[2] === '--port')
 	{
@@ -52,8 +52,11 @@ if(process.argv.length > 2)
 {
 	host = process.env.HOST
 	port = process.env.PORT || process.env.PORT2 || process.env.PORT3 || 5500 || 6500 || 6578
-}
+}*/
 
+
+host = process.env.HOST
+port = process.env.PORT
 
 
 
