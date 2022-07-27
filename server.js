@@ -69,7 +69,7 @@ port = process.env.PORT
 
 
 // mongoose connection
-connection.connect()
+connection.connect(process.env.MongoURI)
 
 
 app.use(express.json()) 	// Body Parser
