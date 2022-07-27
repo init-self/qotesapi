@@ -18,7 +18,7 @@ const Connection =
 		try
 		{
 			await mongoose.connect(connection_string)
-			console.log('\nConnection Successful to \'' + connection_string +'\'')
+			console.log('\nConnection Successful to MongoDB Database\n')
 			console.log('\n Listening to routes ...')
 		}catch(err)
 		{

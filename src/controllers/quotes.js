@@ -10,10 +10,6 @@ const quoteService = require('../services/quotes')
  */
 exports.newQuote = async(req, res) =>
 {
- 	console.log('\n\n Registering a new quote ...')
- 	console.log('Body: ', req.body)
- 	console.log('Params: ', req.params)
- 	console.log('Query: ', req.query)
 
  	let payload = {
  		quote: req.body.quote ? req.body.quote : "",
@@ -26,12 +22,18 @@ exports.newQuote = async(req, res) =>
  	try
  	{
 		let service_response
-		if(req.params && (req.query.has('request') && req.params.request) && (req.params.has('from') && req.params.from == 'guest'))
+		if(Object.keys(req.query).length > 0 && req.query.hasOwnProperty('requestfrom'))
 		{
-			service_response = await quoteService.newQuoteRequest(payload)
-		}else
-		{
-			service_response = await quoteService.newQuote(payload)
+			if(req.query.requestfrom == 'guest')
+			{
+				// will send the mail to admin with the request data
+				service_response = await quoteService.newQuoteRequest(payload)
+			}
+			if(req.query.requestfrom == 'admin')
+			{
+				// will add the new quote in database
+				service_response = await quoteService.newQuote(payload)
+			}
 		}
  		console.log("\n>>>Service Response: ", service_response)
 
@@ -39,7 +41,7 @@ exports.newQuote = async(req, res) =>
  		{
 			// successfull processing but error
 			res.status(200).send({
-				error: true,
+				error: 1,
 				message: service_response.message,
 				data: service_response.data
 			})
@@ -47,7 +49,7 @@ exports.newQuote = async(req, res) =>
 		{
 			// if any server error is encountered 
 			res.status(500).send({
-				error: true,
+				error: 1,
 				message: service_response.message,
 				data: service_response.data
 			})
@@ -55,7 +57,7 @@ exports.newQuote = async(req, res) =>
 		{
 			// successfull response
 			res.status(200).send({
-				error: false,
+				error: 0,
 				message: service_response.message,
 				data: service_response.data,
 			})
@@ -64,9 +66,9 @@ exports.newQuote = async(req, res) =>
 	{
 		console.log("", err)
 		res.status(400).send({
-			error: true,
+			error: 1,
 			message: err,
-			data: []
+			data: {}
 		})
 	}
 }
@@ -83,11 +85,6 @@ exports.newQuote = async(req, res) =>
  */
 exports.allQuotes = async (req, res) =>
 {
-	console.log('\n\n Fetching all quotes ...')
-	console.log('Body: ', req.body)
-	console.log('Params: ', req.params)
-	console.log('Query: ', req.query)
-
 	try
 	{
 		let queries = {
@@ -103,26 +100,25 @@ exports.allQuotes = async (req, res) =>
 		if(service_response.error === 0)
 		{
 			res.status(200).send({
-				error: true,
+				error: 0,
 				message: service_response.message,
 				data: service_response.data
 			})
 		}else
 		{
-			res.status(200).send({
-				error: true,
+			res.status(500).send({
+				error: 1,
 				message: service_response.message,
 				data: service_response.data,
 			})
-			res.send({error: 'Error'})
 		}
 	}catch(err)
 	{
 		console.error("\nExperiencing error in controller [controller/quotes/allQuotes()] : ", err)
 		res.status(500).send({
-			error: true,
+			error: 1,
 			message: err,
-			data: []
+			data: {}
 		})
 	}
 }
@@ -135,29 +131,19 @@ exports.allQuotes = async (req, res) =>
  */
 exports.getQuote = async (req, res) =>
 {
-	console.log('\n\n Fetching quote with ID ....')
-	console.log('Body: ', req.body)
-	console.log('Params: ', req.params)
-	console.log('Query: ', req.query)
-
 	try
 	{
 		let service_response = await quoteService.getQuote(req.params.quoteId.split('&'))
-		if(service_response.error == 1)
+		if(!service_response.error)
 		{
+			// successfull response
 			res.status(400).send({
 				error: true,
 				message: service_response.message,
-				data: []
-			})
-		}else if(service_response.error == 2)
-		{
-			res.status(500).send({
-				error: true,
-				message: service_response.message,
-				data: []
+				data: {}
 			})
 		}
+		else
 		{
 			res.status(200).send({
 				error: false,
@@ -171,7 +157,43 @@ exports.getQuote = async (req, res) =>
 		res.status(200).send({
 			error: true,
 			message: err,
-			data: []
+			data: {}
+		})
+	}
+}
+
+
+
+exports.fetchRandomQuote = async (req, res) =>
+{
+	try
+	{
+		service_response = await quoteService.fetchRandom()
+
+		if(!service_response.error)
+		{
+			// successfull response
+			res.status(200).send({
+				error: 0,
+				message: 'Successfuly retrieved data',
+				data: service_response.data
+			})
+		}
+		if(service_response.error)
+		{
+			res.send({
+				error: 1,
+				message: service_response.message,
+				data: {}
+			})
+		}
+	}
+	catch(err)
+	{
+		res.status(500).send({
+			error: 1,
+			message: err,
+			data: {}
 		})
 	}
 }
@@ -185,11 +207,6 @@ exports.getQuote = async (req, res) =>
  */
 exports.updateQuote = async (req, res) =>
 {
-	console.log('\n\n Updating quote with ID ....')
-	console.log('Body: ', req.body)
-	console.log('Params: ', req.params)
-	console.log('Query: ', req.query)
-
 	let payload = {}
 	if(req.body.quote && req.body.quote != ""){ payload['quote'] = req.body.quote }
 	if(req.body.description && req.body.description != ""){ payload['description'] = req.body.description }
@@ -200,14 +217,14 @@ exports.updateQuote = async (req, res) =>
  	try
  	{
  		let service_response = await quoteService.updateQuote(req.params.quoteId, payload)
- 		console.log('>>>>>>>>>>', service_response)
+ 		console.log('>>> ', service_response)
  	}catch(err)
  	{
- 		console.log('Experiencing error in controller [controller/]', err)
+ 		// console.log('Experiencing error in controller [controller/]', err)
  		res.status(500).send({
- 			error: true,
+ 			error: 1,
  			message: err,
- 			data: []
+ 			data: {}
  		})
  	}
 }

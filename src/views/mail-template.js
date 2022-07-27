@@ -1,5 +1,30 @@
-exports.mail_template = function (user)
+const mail_template = function (quote_data)
 {
+	console.log('Inside Mail Template')
+	/*
+		Description: ${quote_data.description ?? ''}<br/><br/>
+		Author: ${quote_data.author ?? '' }<br/><br/>
+		Comments: ${quote_data.comments ?? '' } <br/> <br/>
+		Category: ${quote_data.category ?? '' }<br/><br/>
+		Tags: ${quote_data.tags ?? '' }<br/><br/>
+	*/
+	function buildtext(quote_data)
+	{
+		let text = ''
+		for (let item in quote_data)
+		{
+			text += `
+			<span id="user-request">
+				${item.replace(item.charAt(0), item.charAt(0).toUpperCase())}: 
+				<span class="font-bold"> ${quote_data[item] ?? ''} </span> <br/><br/>
+			</span>
+			`
+		}
+		return text
+	}
+
+	const QuoteData = buildtext(quote_data)
+
 	return `
 	<!DOCTYPE html>
 	<html>
@@ -9,16 +34,11 @@ exports.mail_template = function (user)
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="x-ua-compatible" content="ie=edge">
 		<title> New Quote Request </title>
-		<!-- Google Font: Secular One -->
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Secular+One&display=swap" rel="stylesheet">
 		<style>
 			body {
 				font-size: 1em;
 				font-weight: 500;
 				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-				font-size-adjust: calc(100% - 155px);
 				letter-spacing: 0.025rem;
 				color: #000022;
 				background-color: #F0EFF4;
@@ -33,26 +53,9 @@ exports.mail_template = function (user)
 				padding: 15px;
 			}
 
-			.message-container #main-text span::before {
-				content: "\“";
-				font-size: 2rem;
-				font-family: 'Secular One', sans-serif;
-			}
-
-			.message-container #main-text span::after {
-				content: "\"";
-				font-size: 2rem;
-				font-family: 'Secular One', sans-serif;
-			}
-
-			.message-container #main-text span {
-				transform: rotate(360deg);
-			}
-
-			.message-container #main-text span {
-				left: 10%;
-				margin: 1rem;
-				padding: 1rem;
+			.message-box p#main-text span#user-request {
+				margin: 2rem;
+				padding: 2rem;
 			}
 		</style>
 	</head>
@@ -62,24 +65,18 @@ exports.mail_template = function (user)
 			<div id="preheader-container" class="preheader-container">
 				<div id="preheader" class="preheader">
 					<p id="preheader-text">
-						A preheader is a short summary text that follows the subject line when an email is viewed in the
-						inbox.
+						A new message, request from anonymous user to add a new quote that he believes is a part of our inspirational community.
 					</p>
 				</div>
 			</div>
+			<br/>
 			<div id="main-container" class="message-container">
 				<div id="message" class="message-box">
 					<p id="main-text">
 						Hello Mr. Ishpreet Singh, <br><br>
-						An Anonymous user requests to add the following quote into your database.<br><br><br><br>
-						<span id="user-request" class="font-bold">
-							${user.user_request_message}
-						</span>
-						<br>
-						<br>
-						<br>
-						Thanks,<br>
-						Anonymous
+						An anonymous user requests to add the following quote into your database.<br><br><br><br>
+						<em style="font-weight: 800"> Quote Details: </em><br/><br/>
+						${QuoteData}
 					</p>
 				</div>
 			</div>
@@ -89,3 +86,7 @@ exports.mail_template = function (user)
 	</html>
 	`
 }
+
+
+
+module.exports = mail_template

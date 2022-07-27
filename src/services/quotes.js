@@ -49,60 +49,29 @@ exports.newQuote = async function (quote_data)
 			return {
 				error: 0,
 				message: 'Successfully added new quote. ',
-				data: [response]
+				data: {quote: response.quote}
 			}
 		}
 	}catch(err)
 	{
-		console.log('Experienced error while resolving new quote ', err)
+		console.log('Experienced error while adding new quote ', err)
 		return {
 			error: 2,
 			message: err,
-			data: []
+			data: {}
 		}
 	}
-}
-
-
-
-exports.newQuoteRequest = async function(quote_data)
-{
-	return sendMail({
-		from: '"QuoteZ"<quotez.dev@gmail.com>',
-		to: 'ishpreet.singh.dev@gmail.com',
-		subject: 'New Quote Request',
-		text: 'A new quote request email.',
-		html: await mail_template(quote_data)
-	}).then( (response) =>
-	{
-		return {
-			error: 0,
-			message: 'Successfully requested for a new Quote. ',
-			data: [
-				{
-					messageId: response
-				}
-			]
-		}
-	}, (error) =>
-	{
-		return {
-			error: 1,
-			message: error,
-			data: []
-		}
-	})
 }
 
 function sendMail(mail_options)
 {
 	let transporter = nodemailer.createTransport({
 		host: 'smtp.gmail.com',
-		port: '465',
+		port: 465,
 		secure: true,
 		auth: {
 			user: 'ishpreet.singh.dev@gmail.com',
-			pass: 'IshpreetSinghDev@159/',
+			pass: 'ebakhtjlzjwtyxan',
 		},
 		tls: {
 			rejectUnauthorized: true
@@ -122,7 +91,7 @@ function sendMail(mail_options)
 			}
 			else
 			{
-				console.log('\n\n\n ---------- \r Message Sent: %s \r ---------------', response.messageId)
+				console.log(`\n\n\n ---------- \r Message Sent: ${response.messageId} \r ---------------`)
 				resolve(response.messageId)
 			}
 		})
@@ -130,6 +99,32 @@ function sendMail(mail_options)
 	return promise
 }
 
+exports.newQuoteRequest = async function(quote_data)
+{
+	return sendMail({
+		from: 'ishpreet.singh.dev@gmail.com', // "QotesAPI"<qotesapi.dev@gmail.com>
+		to: 'ishpreet.singh.dev@gmail.com', // ishpreet.singh.dev@gmail.com, tempmail@maildrop.cc
+		subject: 'New Quote Request',
+		text: 'A new quote request email.',
+		html: await mail_template(quote_data)
+	}).then( (response) =>
+	{
+		return {
+			error: 0,
+			message: 'Successfully requested for a new Quote. ',
+			data: {
+				messageId: response
+			}
+		}
+	}, (error) =>
+	{
+		return {
+			error: 1,
+			message: error,
+			data: {}
+		}
+	})
+}
 
 
 
@@ -168,7 +163,7 @@ exports.getAllQuotes = async function (queries)
 			return {
 				error: 0,
 				message: 'No Quote Found. ',
-				data: []
+				data: {}
 			}
 		}else
 		{
@@ -182,7 +177,11 @@ exports.getAllQuotes = async function (queries)
 	}catch(err)
 	{
 		console.error('\n Error finding Quotes: ', err)
-		return {error: 2, message: err, data: []}
+		return {
+			error: 2, 
+			message: err, 
+			data: {}
+		}
 	}
 }
 
@@ -211,7 +210,37 @@ exports.getQuote = async function (quote_id)
 		return {
 			error: 2,
 			message: err,
-			data: []
+			data: {}
+		}
+	}
+}
+
+
+
+exports.fetchRandom = async function ()
+{
+	try
+	{
+		let res = await QuoteModel.aggregate([{
+			$sample: { 
+				size: 1
+			}
+		}])
+
+		if(res && res.length == 1)
+		{
+			return {
+				error: 0,
+				message: 'Successfully retrieved data',
+				data: res
+			}
+		} 
+	} catch(err)
+	{
+		return {
+			error: 1,
+			message: err,
+			data: {}
 		}
 	}
 }
@@ -232,7 +261,7 @@ exports.updateQuote = async function(quote_id, quote_new_body)
 		return {
 			error: true,
 			message: err,
-			data: []
+			data: {}
 		}
 	}
 }

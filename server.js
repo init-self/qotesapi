@@ -1,13 +1,18 @@
 const express = require('express')
 const connection = require('./connection/connection')
 const routes = require('./src/routes')
+const cors = require('cors')
 
-require('dotenv')
+require('dotenv').config({debug: true})
 require('./src/controllers/auth')
 
 
 
 const app = express()
+
+app.use(cors({
+	origin: 'http://localhost:5500/'
+}))
 
 
 
@@ -64,7 +69,7 @@ port = process.env.PORT
 
 
 // mongoose connection
-connection.connect(process.env.MongoURI)
+connection.connect()
 
 
 app.use(express.json()) 	// Body Parser

@@ -1,7 +1,7 @@
 const express = require('express')
 const authController = require('./controllers/auth')
 const quoteController = require('./controllers/quotes')
-// const Validation = require('../middlewares/validation')
+const setHeader = require('./middlewares/SetHeaders')
 
 
 const router = express.Router()
@@ -35,18 +35,12 @@ router.route('/quote/new')
 router.route('/quote/all')
 	.get(quoteController.allQuotes)	// get all quotes or with filters
 
+router.route('/quote/random')
+	.get(quoteController.fetchRandomQuote)
+
 router.route('/quote/specific/:quoteId')
 	.get(quoteController.getQuote) // get specific quote with specific id
 	.put(quoteController.updateQuote) // update quote
-
-
-// router.route('/quotes')
-// 	.get(routeController.getAllQuotes)
-
-// router.route('/quotes/:quoteid')
-	// .get(routeController.getSpecificQuote)
-	// .put(routeController.updateSpecificQuote)
-	// .delete(routeController.deleteQuote)
 
 
 

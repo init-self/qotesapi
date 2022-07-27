@@ -4,7 +4,7 @@
   "description": "Api for storing quotes and inspirations",
   "main": "server.js",
   "scripts": {
-    "test": "nodemon server.js",
+    "autostart": "nodemon server.js",
     "start": "node server.js"
   },
   "keywords": [
@@ -17,6 +17,7 @@
   "author": "Ishpreet Singh",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "mongoose": "^6.1.4",
