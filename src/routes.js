@@ -4,9 +4,11 @@ const quoteController = require('./controllers/quotes')
 const setHeader = require('./middlewares/SetHeaders')
 
 
+const router = express.Router()
+
+
 router.use(setHeader)
 
-const router = express.Router()
 
 router.get('/', (req, res) =>
 {
