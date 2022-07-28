@@ -4,6 +4,8 @@ const quoteController = require('./controllers/quotes')
 const setHeader = require('./middlewares/SetHeaders')
 
 
+router.use(setHeader)
+
 const router = express.Router()
 
 router.get('/', (req, res) =>
