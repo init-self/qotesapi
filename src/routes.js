@@ -1,13 +1,9 @@
 const express = require('express')
 const authController = require('./controllers/auth')
 const quoteController = require('./controllers/quotes')
-const setHeader = require('./middlewares/SetHeaders')
-
 
 const router = express.Router()
 
-
-router.use(setHeader())
 
 
 router.get('/', (req, res) =>

@@ -190,6 +190,7 @@ exports.fetchRandomQuote = async (req, res) =>
 	}
 	catch(err)
 	{
+		console.log('Experiencing Error while fetching random quote: ', err)
 		res.status(500).send({
 			error: 1,
 			message: err,

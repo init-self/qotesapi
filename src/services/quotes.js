@@ -227,6 +227,8 @@ exports.fetchRandom = async function ()
 			}
 		}])
 
+		console.log(res)
+
 		if(res && res.length == 1)
 		{
 			return {
@@ -234,7 +236,14 @@ exports.fetchRandom = async function ()
 				message: 'Successfully retrieved data',
 				data: res
 			}
-		} 
+		}else 
+		{
+			return {
+				error: 1,
+				message: 'No data found.',
+				data: {}
+			}
+		}
 	} catch(err)
 	{
 		return {
