@@ -7,7 +7,7 @@ const setHeader = require('./middlewares/SetHeaders')
 const router = express.Router()
 
 
-router.use(setHeader)
+router.use(setHeader())
 
 
 router.get('/', (req, res) =>
