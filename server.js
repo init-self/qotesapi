@@ -10,10 +10,11 @@ require('./src/controllers/auth')
 
 const app = express()
 
+/*
 app.use(cors({
 	origin: 'http://localhost:5500/'
 }))
-
+*/
 
 
 
